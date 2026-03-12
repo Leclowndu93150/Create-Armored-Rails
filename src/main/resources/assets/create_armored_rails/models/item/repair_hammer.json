@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:item/handheld",
+  "textures": {
+    "layer0": "create_armored_rails:item/repair_hammer"
+  }
+}
