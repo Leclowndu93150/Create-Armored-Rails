@@ -32,7 +32,7 @@ public class HullMovingInteraction extends MovingInteractionBehaviour {
     @Override
     public boolean handlePlayerInteraction(Player player, InteractionHand activeHand, BlockPos localPos,
                                            AbstractContraptionEntity contraptionEntity) {
-        if (player.level().isClientSide()) return false;
+        if (player.level().isClientSide()) return true;
         if (!(player instanceof ServerPlayer sp)) return false;
 
         ItemStack mainHand = player.getMainHandItem();
@@ -48,10 +48,9 @@ public class HullMovingInteraction extends MovingInteractionBehaviour {
         StructureBlockInfo info = entity.getContraption().getBlocks().get(localPos);
         if (info == null) return false;
 
-        ItemStackHandler handler = new ItemStackHandler(HullMenu.HULL_SLOT_COUNT);
-        if (info.nbt() != null && info.nbt().contains("Inventory")) {
-            handler.deserializeNBT(info.nbt().getCompound("Inventory"));
-        }
+        ItemStackHandler handler = info.nbt() != null && info.nbt().contains("Inventory")
+                ? HullMenu.loadInventory(info.nbt().getCompound("Inventory"))
+                : new ItemStackHandler(HullMenu.HULL_SLOT_COUNT);
 
         ((ServerPlayerAccessor) player).invokeNextContainerCounter();
         int containerId = ((ServerPlayerAccessor) player).getContainerCounter();
@@ -76,8 +75,7 @@ public class HullMovingInteraction extends MovingInteractionBehaviour {
 
         String requiredMaterial = "";
         if (info.nbt() != null && info.nbt().contains("Inventory")) {
-            ItemStackHandler handler = new ItemStackHandler(HullMenu.HULL_SLOT_COUNT);
-            handler.deserializeNBT(info.nbt().getCompound("Inventory"));
+            ItemStackHandler handler = HullMenu.loadInventory(info.nbt().getCompound("Inventory"));
             requiredMaterial = UpgradeHelper.getRepairMaterial(handler.getStackInSlot(0));
         }
 

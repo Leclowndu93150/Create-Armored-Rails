@@ -2,192 +2,146 @@ package com.leclowndu93150.create_armored_rails.health;
 
 import com.leclowndu93150.create_armored_rails.Config;
 import com.leclowndu93150.create_armored_rails.registry.ModItems;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.registries.ForgeRegistries;
 
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.function.Supplier;
 
 public class UpgradeHelper {
+    private static final Map<Item, Supplier<HullFrameStats>> HULL_FRAMES = new HashMap<>();
+    private static final Map<Item, Supplier<ModifierStats>> MODIFIERS = new HashMap<>();
+
+    public static void init() {
+        HULL_FRAMES.clear();
+        MODIFIERS.clear();
+
+        HULL_FRAMES.put(ModItems.ANDESITE_HULL_FRAME.get(), () -> new HullFrameStats(
+                Config.ANDESITE_HP.get(), Config.ANDESITE_BLAST.get().floatValue(), Config.ANDESITE_PROJ.get().floatValue(),
+                Config.ANDESITE_SPEED.get().floatValue(), Config.ANDESITE_DMG_RED.get().floatValue(), Config.ANDESITE_CRIT.get().floatValue(),
+                Config.ANDESITE_MOB_RANGE.get(), Config.ANDESITE_REPAIR_COST.get().floatValue(), Config.ANDESITE_SPEED_PENALTY_RED.get().floatValue(),
+                Config.ANDESITE_FIRE_RESIST.get(), Config.ANDESITE_MOD_SLOTS.get(), Config.ANDESITE_REPAIR_MAT.get()));
+
+        HULL_FRAMES.put(ModItems.COPPER_HULL_FRAME.get(), () -> new HullFrameStats(
+                Config.COPPER_HP.get(), Config.COPPER_BLAST.get().floatValue(), Config.COPPER_PROJ.get().floatValue(),
+                Config.COPPER_SPEED.get().floatValue(), Config.COPPER_DMG_RED.get().floatValue(), Config.COPPER_CRIT.get().floatValue(),
+                Config.COPPER_MOB_RANGE.get(), Config.COPPER_REPAIR_COST.get().floatValue(), Config.COPPER_SPEED_PENALTY_RED.get().floatValue(),
+                Config.COPPER_FIRE_RESIST.get(), Config.COPPER_MOD_SLOTS.get(), Config.COPPER_REPAIR_MAT.get()));
+
+        HULL_FRAMES.put(ModItems.BRASS_HULL_FRAME.get(), () -> new HullFrameStats(
+                Config.BRASS_HP.get(), Config.BRASS_BLAST.get().floatValue(), Config.BRASS_PROJ.get().floatValue(),
+                Config.BRASS_SPEED.get().floatValue(), Config.BRASS_DMG_RED.get().floatValue(), Config.BRASS_CRIT.get().floatValue(),
+                Config.BRASS_MOB_RANGE.get(), Config.BRASS_REPAIR_COST.get().floatValue(), Config.BRASS_SPEED_PENALTY_RED.get().floatValue(),
+                Config.BRASS_FIRE_RESIST.get(), Config.BRASS_MOD_SLOTS.get(), Config.BRASS_REPAIR_MAT.get()));
+
+        HULL_FRAMES.put(ModItems.ALUMINIUM_HULL_FRAME.get(), () -> new HullFrameStats(
+                Config.ALUMINIUM_HP.get(), Config.ALUMINIUM_BLAST.get().floatValue(), Config.ALUMINIUM_PROJ.get().floatValue(),
+                Config.ALUMINIUM_SPEED.get().floatValue(), Config.ALUMINIUM_DMG_RED.get().floatValue(), Config.ALUMINIUM_CRIT.get().floatValue(),
+                Config.ALUMINIUM_MOB_RANGE.get(), Config.ALUMINIUM_REPAIR_COST.get().floatValue(), Config.ALUMINIUM_SPEED_PENALTY_RED.get().floatValue(),
+                Config.ALUMINIUM_FIRE_RESIST.get(), Config.ALUMINIUM_MOD_SLOTS.get(), Config.ALUMINIUM_REPAIR_MAT.get()));
+
+        HULL_FRAMES.put(ModItems.IRON_HULL_FRAME.get(), () -> new HullFrameStats(
+                Config.IRON_HP.get(), Config.IRON_BLAST.get().floatValue(), Config.IRON_PROJ.get().floatValue(),
+                Config.IRON_SPEED.get().floatValue(), Config.IRON_DMG_RED.get().floatValue(), Config.IRON_CRIT.get().floatValue(),
+                Config.IRON_MOB_RANGE.get(), Config.IRON_REPAIR_COST.get().floatValue(), Config.IRON_SPEED_PENALTY_RED.get().floatValue(),
+                Config.IRON_FIRE_RESIST.get(), Config.IRON_MOD_SLOTS.get(), Config.IRON_REPAIR_MAT.get()));
+
+        HULL_FRAMES.put(ModItems.STEEL_HULL_FRAME.get(), () -> new HullFrameStats(
+                Config.STEEL_HP.get(), Config.STEEL_BLAST.get().floatValue(), Config.STEEL_PROJ.get().floatValue(),
+                Config.STEEL_SPEED.get().floatValue(), Config.STEEL_DMG_RED.get().floatValue(), Config.STEEL_CRIT.get().floatValue(),
+                Config.STEEL_MOB_RANGE.get(), Config.STEEL_REPAIR_COST.get().floatValue(), Config.STEEL_SPEED_PENALTY_RED.get().floatValue(),
+                Config.STEEL_FIRE_RESIST.get(), Config.STEEL_MOD_SLOTS.get(), Config.STEEL_REPAIR_MAT.get()));
+
+        HULL_FRAMES.put(ModItems.TUNGSTEN_HULL_FRAME.get(), () -> new HullFrameStats(
+                Config.TUNGSTEN_HP.get(), Config.TUNGSTEN_BLAST.get().floatValue(), Config.TUNGSTEN_PROJ.get().floatValue(),
+                Config.TUNGSTEN_SPEED.get().floatValue(), Config.TUNGSTEN_DMG_RED.get().floatValue(), Config.TUNGSTEN_CRIT.get().floatValue(),
+                Config.TUNGSTEN_MOB_RANGE.get(), Config.TUNGSTEN_REPAIR_COST.get().floatValue(), Config.TUNGSTEN_SPEED_PENALTY_RED.get().floatValue(),
+                Config.TUNGSTEN_FIRE_RESIST.get(), Config.TUNGSTEN_MOD_SLOTS.get(), Config.TUNGSTEN_REPAIR_MAT.get()));
+
+        HULL_FRAMES.put(ModItems.NETHERITE_HULL_FRAME.get(), () -> new HullFrameStats(
+                Config.NETHERITE_HP.get(), Config.NETHERITE_BLAST.get().floatValue(), Config.NETHERITE_PROJ.get().floatValue(),
+                Config.NETHERITE_SPEED.get().floatValue(), Config.NETHERITE_DMG_RED.get().floatValue(), Config.NETHERITE_CRIT.get().floatValue(),
+                Config.NETHERITE_MOB_RANGE.get(), Config.NETHERITE_REPAIR_COST.get().floatValue(), Config.NETHERITE_SPEED_PENALTY_RED.get().floatValue(),
+                Config.NETHERITE_FIRE_RESIST.get(), Config.NETHERITE_MOD_SLOTS.get(), Config.NETHERITE_REPAIR_MAT.get()));
+
+        HULL_FRAMES.put(ModItems.TUNGSTEN_ALLOY_HULL_FRAME.get(), () -> new HullFrameStats(
+                Config.TUNGSTEN_ALLOY_HP.get(), Config.TUNGSTEN_ALLOY_BLAST.get().floatValue(), Config.TUNGSTEN_ALLOY_PROJ.get().floatValue(),
+                Config.TUNGSTEN_ALLOY_SPEED.get().floatValue(), Config.TUNGSTEN_ALLOY_DMG_RED.get().floatValue(), Config.TUNGSTEN_ALLOY_CRIT.get().floatValue(),
+                Config.TUNGSTEN_ALLOY_MOB_RANGE.get(), Config.TUNGSTEN_ALLOY_REPAIR_COST.get().floatValue(), Config.TUNGSTEN_ALLOY_SPEED_PENALTY_RED.get().floatValue(),
+                Config.TUNGSTEN_ALLOY_FIRE_RESIST.get(), Config.TUNGSTEN_ALLOY_MOD_SLOTS.get(), Config.TUNGSTEN_ALLOY_REPAIR_MAT.get()));
+
+        MODIFIERS.put(ModItems.OVERDRIVE_REGULATOR.get(), () -> new ModifierStats(
+                0, 0, 0, 0, 0, Config.OVERDRIVE_SPEED_BOOST.get().floatValue(),
+                Config.OVERDRIVE_COOLDOWN_TICKS.get(), 0, 0, 0));
+
+        MODIFIERS.put(ModItems.EMERGENCY_OVERRIDE_SYSTEM.get(), () -> new ModifierStats(
+                0, 0, Config.EMERGENCY_OVERRIDE_CRIT_REDUCTION.get().floatValue(),
+                0, 0, 0, 0, 0, 0, 0));
+
+        MODIFIERS.put(ModItems.OPTICAL_CAMOUFLAGE.get(), () -> new ModifierStats(
+                0, 0, 0, 0, 0, 0, 0,
+                Config.OPTICAL_CAMOUFLAGE_RANGE_REDUCTION.get(), 0, 0));
+
+        MODIFIERS.put(ModItems.PRISTINE_CONDITION.get(), () -> new ModifierStats(
+                0, 0, 0, 0, Config.PRISTINE_SPEED_BOOST.get().floatValue(),
+                0, 0, 0, 0, 0));
+
+        MODIFIERS.put(ModItems.SUPERHEATED_ENGINES.get(), () -> new ModifierStats(
+                0, 0, 0, Config.SUPERHEATED_SPEED_BOOST.get().floatValue(),
+                0, 0, 0, 0, 0, 0));
+
+        MODIFIERS.put(ModItems.REINFORCED_BULKHEADS.get(), () -> new ModifierStats(
+                Config.REINFORCED_BULKHEADS_DMG_REDUCTION.get().floatValue(),
+                0, 0, 0, 0, 0, 0, 0, 0, 0));
+
+        MODIFIERS.put(ModItems.SHOCK_ABSORBER.get(), () -> new ModifierStats(
+                0, Config.SHOCK_ABSORBER_BLAST_PROTECTION.get().floatValue(),
+                0, 0, 0, 0, 0, 0, 0, 0));
+
+        MODIFIERS.put(ModItems.REACTIVE_ARMOR.get(), () -> new ModifierStats(
+                0, 0, 0, 0, 0, 0, 0, 0, 0,
+                Config.REACTIVE_ARMOR_THORNS_DAMAGE.get().floatValue()));
+
+        MODIFIERS.put(ModItems.ENGINEERS_MANUALS.get(), () -> new ModifierStats(
+                0, 0, 0, 0, 0, 0, 0, 0,
+                Config.ENGINEERS_MANUALS_REPAIR_REDUCTION.get().floatValue(), 0));
+    }
 
     public static boolean isUpgradeItem(ItemStack stack) {
         if (stack.isEmpty()) return false;
-        Item item = stack.getItem();
-        if (item == ModItems.IRON_PLATING.get()) return true;
-        if (item == ModItems.STEEL_PLATING.get()) return true;
-        if (item == ModItems.TUNGSTEN_PLATING.get()) return true;
-        return isCustomUpgrade(item);
+        return HULL_FRAMES.containsKey(stack.getItem());
     }
 
     public static boolean isModifierItem(ItemStack stack) {
         if (stack.isEmpty()) return false;
-        Item item = stack.getItem();
-        if (item == ModItems.SHOCK_ABSORBER.get()) return true;
-        if (item == ModItems.REINFORCED_FRAME.get()) return true;
-        if (item == ModItems.HARDENED_PLATING.get()) return true;
-        if (item == ModItems.AERODYNAMIC_CASING.get()) return true;
-        return isCustomModifier(item);
+        return MODIFIERS.containsKey(stack.getItem());
+    }
+
+    public static HullFrameStats getHullFrameStats(ItemStack stack) {
+        if (stack.isEmpty()) return null;
+        Supplier<HullFrameStats> supplier = HULL_FRAMES.get(stack.getItem());
+        return supplier != null ? supplier.get() : null;
+    }
+
+    public static ModifierStats getModifierStats(ItemStack stack) {
+        if (stack.isEmpty()) return null;
+        Supplier<ModifierStats> supplier = MODIFIERS.get(stack.getItem());
+        return supplier != null ? supplier.get() : null;
     }
 
     public static int getUpgradeHP(ItemStack stack) {
-        if (stack.isEmpty()) return 0;
-        Item item = stack.getItem();
-        if (item == ModItems.IRON_PLATING.get()) return Config.IRON_PLATING_HP.get();
-        if (item == ModItems.STEEL_PLATING.get()) return Config.STEEL_PLATING_HP.get();
-        if (item == ModItems.TUNGSTEN_PLATING.get()) return Config.TUNGSTEN_PLATING_HP.get();
-        return getCustomUpgradeHP(item);
+        HullFrameStats stats = getHullFrameStats(stack);
+        return stats != null ? (int) stats.hpBonus() : 0;
     }
 
     public static int getModifierSlotCount(ItemStack stack) {
-        if (stack.isEmpty()) return 0;
-        Item item = stack.getItem();
-        if (item == ModItems.IRON_PLATING.get()) return Config.IRON_MODIFIER_SLOTS.get();
-        if (item == ModItems.STEEL_PLATING.get()) return Config.STEEL_MODIFIER_SLOTS.get();
-        if (item == ModItems.TUNGSTEN_PLATING.get()) return Config.TUNGSTEN_MODIFIER_SLOTS.get();
-        return getCustomUpgradeModifierSlots(item);
-    }
-
-    public static float getDamageReduction(ItemStack stack) {
-        if (stack.isEmpty()) return 0f;
-        Item item = stack.getItem();
-        if (item == ModItems.REINFORCED_FRAME.get()) return Config.REINFORCED_FRAME_DAMAGE_REDUCTION.get().floatValue();
-        return getCustomModifierDamageReduction(item);
-    }
-
-    public static float getThresholdReduction(ItemStack stack) {
-        if (stack.isEmpty()) return 0f;
-        Item item = stack.getItem();
-        if (item == ModItems.SHOCK_ABSORBER.get()) return Config.SHOCK_ABSORBER_THRESHOLD_REDUCTION.get().floatValue();
-        return getCustomModifierThresholdReduction(item);
-    }
-
-    public static float getHPBonusPercent(ItemStack stack) {
-        if (stack.isEmpty()) return 0f;
-        Item item = stack.getItem();
-        if (item == ModItems.HARDENED_PLATING.get()) return Config.HARDENED_PLATING_HP_BONUS.get().floatValue();
-        return getCustomModifierHPBonus(item);
-    }
-
-    public static float getSpeedBoost(ItemStack stack) {
-        if (stack.isEmpty()) return 0f;
-        Item item = stack.getItem();
-        if (item == ModItems.AERODYNAMIC_CASING.get()) return Config.AERODYNAMIC_CASING_SPEED_BOOST.get().floatValue();
-        return 0f;
+        HullFrameStats stats = getHullFrameStats(stack);
+        return stats != null ? stats.modifierSlots() : 0;
     }
 
     public static String getRepairMaterial(ItemStack stack) {
-        if (stack.isEmpty()) return "";
-        Item item = stack.getItem();
-        if (item == ModItems.IRON_PLATING.get()) return Config.IRON_REPAIR_MATERIAL.get();
-        if (item == ModItems.STEEL_PLATING.get()) return Config.STEEL_REPAIR_MATERIAL.get();
-        if (item == ModItems.TUNGSTEN_PLATING.get()) return Config.TUNGSTEN_REPAIR_MATERIAL.get();
-        return getCustomUpgradeRepairMaterial(item);
-    }
-
-    private static boolean isCustomUpgrade(Item item) {
-        ResourceLocation id = ForgeRegistries.ITEMS.getKey(item);
-        if (id == null) return false;
-        String idStr = id.toString();
-        List<? extends String> customs = Config.CUSTOM_UPGRADES.get();
-        for (String entry : customs) {
-            String[] parts = entry.split(",");
-            if (parts.length >= 1 && parts[0].equals(idStr)) return true;
-        }
-        return false;
-    }
-
-    private static boolean isCustomModifier(Item item) {
-        ResourceLocation id = ForgeRegistries.ITEMS.getKey(item);
-        if (id == null) return false;
-        String idStr = id.toString();
-        List<? extends String> customs = Config.CUSTOM_MODIFIERS.get();
-        for (String entry : customs) {
-            String[] parts = entry.split(",");
-            if (parts.length >= 1 && parts[0].equals(idStr)) return true;
-        }
-        return false;
-    }
-
-    private static int getCustomUpgradeHP(Item item) {
-        ResourceLocation id = ForgeRegistries.ITEMS.getKey(item);
-        if (id == null) return 0;
-        String idStr = id.toString();
-        List<? extends String> customs = Config.CUSTOM_UPGRADES.get();
-        for (String entry : customs) {
-            String[] parts = entry.split(",");
-            if (parts.length >= 2 && parts[0].equals(idStr)) {
-                try { return Integer.parseInt(parts[1]); } catch (NumberFormatException e) { return 0; }
-            }
-        }
-        return 0;
-    }
-
-    private static int getCustomUpgradeModifierSlots(Item item) {
-        ResourceLocation id = ForgeRegistries.ITEMS.getKey(item);
-        if (id == null) return 0;
-        String idStr = id.toString();
-        List<? extends String> customs = Config.CUSTOM_UPGRADES.get();
-        for (String entry : customs) {
-            String[] parts = entry.split(",");
-            if (parts.length >= 3 && parts[0].equals(idStr)) {
-                try { return Integer.parseInt(parts[2]); } catch (NumberFormatException e) { return 0; }
-            }
-        }
-        return 0;
-    }
-
-    private static String getCustomUpgradeRepairMaterial(Item item) {
-        ResourceLocation id = ForgeRegistries.ITEMS.getKey(item);
-        if (id == null) return "";
-        String idStr = id.toString();
-        List<? extends String> customs = Config.CUSTOM_UPGRADES.get();
-        for (String entry : customs) {
-            String[] parts = entry.split(",");
-            if (parts.length >= 4 && parts[0].equals(idStr)) return parts[3];
-        }
-        return "";
-    }
-
-    private static float getCustomModifierDamageReduction(Item item) {
-        ResourceLocation id = ForgeRegistries.ITEMS.getKey(item);
-        if (id == null) return 0f;
-        String idStr = id.toString();
-        List<? extends String> customs = Config.CUSTOM_MODIFIERS.get();
-        for (String entry : customs) {
-            String[] parts = entry.split(",");
-            if (parts.length >= 2 && parts[0].equals(idStr)) {
-                try { return Float.parseFloat(parts[1]); } catch (NumberFormatException e) { return 0f; }
-            }
-        }
-        return 0f;
-    }
-
-    private static float getCustomModifierThresholdReduction(Item item) {
-        ResourceLocation id = ForgeRegistries.ITEMS.getKey(item);
-        if (id == null) return 0f;
-        String idStr = id.toString();
-        List<? extends String> customs = Config.CUSTOM_MODIFIERS.get();
-        for (String entry : customs) {
-            String[] parts = entry.split(",");
-            if (parts.length >= 3 && parts[0].equals(idStr)) {
-                try { return Float.parseFloat(parts[2]); } catch (NumberFormatException e) { return 0f; }
-            }
-        }
-        return 0f;
-    }
-
-    private static float getCustomModifierHPBonus(Item item) {
-        ResourceLocation id = ForgeRegistries.ITEMS.getKey(item);
-        if (id == null) return 0f;
-        String idStr = id.toString();
-        List<? extends String> customs = Config.CUSTOM_MODIFIERS.get();
-        for (String entry : customs) {
-            String[] parts = entry.split(",");
-            if (parts.length >= 4 && parts[0].equals(idStr)) {
-                try { return Float.parseFloat(parts[3]); } catch (NumberFormatException e) { return 0f; }
-            }
-        }
-        return 0f;
+        HullFrameStats stats = getHullFrameStats(stack);
+        return stats != null ? stats.repairMaterial() : "";
     }
 }

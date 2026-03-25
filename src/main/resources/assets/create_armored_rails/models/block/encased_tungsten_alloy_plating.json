@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:block/cube_all",
+  "textures": {
+    "all": "create_armored_rails:block/encased_tungsten_alloy_plating"
+  }
+}

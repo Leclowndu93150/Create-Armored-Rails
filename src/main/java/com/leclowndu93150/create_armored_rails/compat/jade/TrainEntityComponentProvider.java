@@ -2,9 +2,19 @@ package com.leclowndu93150.create_armored_rails.compat.jade;
 
 import com.leclowndu93150.create_armored_rails.CreateArmoredRails;
 import com.leclowndu93150.create_armored_rails.Config;
+import com.leclowndu93150.create_armored_rails.block.HullMenu;
+import com.leclowndu93150.create_armored_rails.health.HullFrameStats;
 import com.leclowndu93150.create_armored_rails.health.TrainHealthData;
 import com.leclowndu93150.create_armored_rails.health.TrainHealthManager;
+import com.leclowndu93150.create_armored_rails.health.UpgradeHelper;
+import com.leclowndu93150.create_armored_rails.registry.ModBlocks;
+import com.simibubi.create.content.trains.entity.Carriage;
+import com.simibubi.create.content.trains.entity.CarriageContraption;
 import com.simibubi.create.content.trains.entity.CarriageContraptionEntity;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.levelgen.structure.templatesystem.StructureTemplate.StructureBlockInfo;
+import net.minecraftforge.items.ItemStackHandler;
+import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraft.ChatFormatting;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
@@ -38,6 +48,17 @@ public enum TrainEntityComponentProvider implements IEntityComponentProvider, IS
             tooltip.add(Component.translatable("jade.create_armored_rails.initializing")
                     .withStyle(ChatFormatting.GRAY));
             return;
+        }
+
+        String hullFrameName = data.getString("HullFrameName");
+        if (!hullFrameName.isEmpty()) {
+            tooltip.add(Component.translatable("jade.create_armored_rails.hull_frame")
+                    .withStyle(ChatFormatting.GRAY)
+                    .append(Component.literal(": ").withStyle(ChatFormatting.GRAY))
+                    .append(Component.literal(hullFrameName).withStyle(ChatFormatting.AQUA)));
+        } else {
+            tooltip.add(Component.translatable("jade.create_armored_rails.no_hull_frame")
+                    .withStyle(ChatFormatting.DARK_GRAY));
         }
 
         float maxHP = data.getFloat("TrainMaxHP");
@@ -89,6 +110,37 @@ public enum TrainEntityComponentProvider implements IEntityComponentProvider, IS
                     .append(Component.literal(": ").withStyle(ChatFormatting.GRAY))
                     .append(Component.literal(Math.round(damageReduction * 100) + "%").withStyle(ChatFormatting.BLUE)));
         }
+
+        float blastProt = data.getFloat("TrainBlastProtection");
+        if (blastProt > 0) {
+            tooltip.add(Component.translatable("jade.create_armored_rails.blast_protection")
+                    .withStyle(ChatFormatting.GRAY)
+                    .append(Component.literal(": ").withStyle(ChatFormatting.GRAY))
+                    .append(Component.literal(Math.round(blastProt * 100) + "%").withStyle(ChatFormatting.BLUE)));
+        }
+
+        float projProt = data.getFloat("TrainProjectileProtection");
+        if (projProt > 0) {
+            tooltip.add(Component.translatable("jade.create_armored_rails.projectile_protection")
+                    .withStyle(ChatFormatting.GRAY)
+                    .append(Component.literal(": ").withStyle(ChatFormatting.GRAY))
+                    .append(Component.literal(Math.round(projProt * 100) + "%").withStyle(ChatFormatting.BLUE)));
+        }
+
+        if (data.getBoolean("TrainFireResistant")) {
+            tooltip.add(Component.translatable("jade.create_armored_rails.fire_resistant")
+                    .withStyle(ChatFormatting.GOLD));
+        }
+
+        String repairMat = data.getString("RepairMaterial");
+        if (!repairMat.isEmpty()) {
+            var repairItem = ForgeRegistries.ITEMS.getValue(new ResourceLocation(repairMat));
+            String repairName = repairItem != null ? repairItem.getDescription().getString() : repairMat;
+            tooltip.add(Component.translatable("jade.create_armored_rails.repair_material")
+                    .withStyle(ChatFormatting.GRAY)
+                    .append(Component.literal(": ").withStyle(ChatFormatting.GRAY))
+                    .append(Component.literal(repairName).withStyle(ChatFormatting.WHITE)));
+        }
     }
 
     @Override
@@ -117,6 +169,33 @@ public enum TrainEntityComponentProvider implements IEntityComponentProvider, IS
         data.putBoolean("TrainCritical", health.isCriticalFailure(Config.CRITICAL_FAILURE_THRESHOLD.get()));
         data.putFloat("TrainDamageReduction", health.getDamageReduction());
         data.putFloat("TrainSpeedMultiplier", health.getSpeedMultiplier());
+        data.putFloat("TrainBlastProtection", health.getBlastProtection());
+        data.putFloat("TrainProjectileProtection", health.getProjectileProtection());
+        data.putBoolean("TrainFireResistant", health.isFireResistant());
+
+        String hullFrameName = "";
+        String repairMaterial = Config.BASE_REPAIR_MATERIAL.get();
+        for (Carriage c : carriage.train.carriages) {
+            var entity = c.anyAvailableEntity();
+            if (entity == null) continue;
+            if (!(entity.getContraption() instanceof CarriageContraption cc)) continue;
+            for (StructureBlockInfo info : cc.getBlocks().values()) {
+                if (info.state().getBlock() != ModBlocks.HULL_BLOCK.get()) continue;
+                if (info.nbt() != null && info.nbt().contains("Inventory")) {
+                    ItemStackHandler handler = HullMenu.loadInventory(info.nbt().getCompound("Inventory"));
+                    ItemStack frameStack = handler.getStackInSlot(0);
+                    if (!frameStack.isEmpty()) {
+                        hullFrameName = frameStack.getHoverName().getString();
+                        String mat = UpgradeHelper.getRepairMaterial(frameStack);
+                        if (!mat.isEmpty()) repairMaterial = mat;
+                    }
+                }
+                break;
+            }
+            if (!hullFrameName.isEmpty()) break;
+        }
+        data.putString("HullFrameName", hullFrameName);
+        data.putString("RepairMaterial", repairMaterial);
     }
 
     @Override

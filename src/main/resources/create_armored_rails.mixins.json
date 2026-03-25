@@ -10,7 +10,8 @@
     "CarriageContraptionEntityMixin",
     "ContainerStillValidMixin",
     "ContainerBlockEntityValidMixin",
-    "ServerPlayerAccessor"
+    "ServerPlayerAccessor",
+    "StationBlockEntityMixin"
   ],
   "client": [],
   "injectors": {

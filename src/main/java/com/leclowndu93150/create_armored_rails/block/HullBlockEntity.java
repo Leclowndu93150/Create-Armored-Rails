@@ -21,7 +21,7 @@ import net.minecraftforge.items.ItemStackHandler;
 import org.jetbrains.annotations.Nullable;
 
 public class HullBlockEntity extends BlockEntity implements MenuProvider {
-    public static final int SLOT_COUNT = 4;
+    public static final int SLOT_COUNT = 5;
 
     public final ItemStackHandler inventory = new ItemStackHandler(SLOT_COUNT) {
         @Override
@@ -32,7 +32,7 @@ public class HullBlockEntity extends BlockEntity implements MenuProvider {
         @Override
         public boolean isItemValid(int slot, ItemStack stack) {
             if (slot == 0) return UpgradeHelper.isUpgradeItem(stack);
-            if (slot >= 1 && slot <= 3) return UpgradeHelper.isModifierItem(stack);
+            if (slot >= 1 && slot <= 4) return UpgradeHelper.isModifierItem(stack);
             return false;
         }
 

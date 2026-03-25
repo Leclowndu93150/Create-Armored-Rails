@@ -1,11 +1,13 @@
 package com.leclowndu93150.create_armored_rails.ai;
 
 import com.leclowndu93150.create_armored_rails.Config;
+import com.leclowndu93150.create_armored_rails.health.TrainHealthData;
 import com.leclowndu93150.create_armored_rails.health.TrainHealthManager;
 import com.simibubi.create.content.trains.entity.CarriageContraptionEntity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.goal.Goal;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 
@@ -33,8 +35,8 @@ public class TargetTrainGoal extends Goal {
 
         if (mob.getTarget() != null) return false;
 
-        double range = Config.MOB_TARGET_RANGE.get();
-        AABB searchBox = mob.getBoundingBox().inflate(range);
+        double maxSearchRange = Config.BASE_MOB_RANGE.get() + 10;
+        AABB searchBox = mob.getBoundingBox().inflate(maxSearchRange);
         List<CarriageContraptionEntity> trains = mob.level()
                 .getEntitiesOfClass(CarriageContraptionEntity.class, searchBox, entity -> {
                     var carriage = entity.getCarriage();
@@ -43,10 +45,34 @@ public class TargetTrainGoal extends Goal {
 
         if (trains.isEmpty()) return false;
 
+        double proximityRange = Config.MOB_PROXIMITY_RANGE.get();
+
         target = null;
         double closest = Double.MAX_VALUE;
         for (CarriageContraptionEntity train : trains) {
+            var carriage = train.getCarriage();
+            if (carriage == null) continue;
+
+            TrainHealthData data = TrainHealthManager.get(carriage.train.id);
+            if (data == null) continue;
+
+            double effectiveRange = Config.BASE_MOB_RANGE.get() + data.getMobRangeModifier();
+            if (effectiveRange <= 0) continue;
+
             double dist = mob.distanceToSqr(train);
+            if (dist > effectiveRange * effectiveRange) continue;
+
+            if (proximityRange > 0) {
+                boolean playerNearby = false;
+                for (Player p : mob.level().players()) {
+                    if (p.distanceToSqr(train) < proximityRange * proximityRange) {
+                        playerNearby = true;
+                        break;
+                    }
+                }
+                if (!playerNearby) continue;
+            }
+
             if (dist < closest) {
                 closest = dist;
                 target = train;
@@ -58,10 +84,12 @@ public class TargetTrainGoal extends Goal {
     @Override
     public boolean canContinueToUse() {
         if (target == null || target.isRemoved()) return false;
-        double range = Config.MOB_TARGET_RANGE.get();
-        if (mob.distanceToSqr(target) > range * range) return false;
         var carriage = target.getCarriage();
-        return carriage != null && TrainHealthManager.get(carriage.train.id) != null;
+        if (carriage == null) return false;
+        TrainHealthData data = TrainHealthManager.get(carriage.train.id);
+        if (data == null) return false;
+        double effectiveRange = Config.BASE_MOB_RANGE.get() + data.getMobRangeModifier();
+        return mob.distanceToSqr(target) <= effectiveRange * effectiveRange * 1.5;
     }
 
     @Override

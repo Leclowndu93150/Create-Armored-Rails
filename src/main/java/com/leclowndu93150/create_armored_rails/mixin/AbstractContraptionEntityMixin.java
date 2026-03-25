@@ -23,8 +23,10 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
+import net.minecraft.tags.DamageTypeTags;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructureTemplate.StructureBlockInfo;
@@ -54,9 +56,23 @@ public abstract class AbstractContraptionEntityMixin {
         TrainHealthData data = TrainHealthManager.get(carriage.train.id);
         if (data == null || data.getMaxHP() <= 0) return;
 
-        data.takeDamage(amount);
+        boolean isFire = source.is(DamageTypeTags.IS_FIRE);
+        if (isFire && data.isFireResistant()) {
+            cir.setReturnValue(false);
+            return;
+        }
+
+        boolean isExplosion = source.is(DamageTypeTags.IS_EXPLOSION);
+        boolean isProjectile = source.is(DamageTypeTags.IS_PROJECTILE);
+        data.takeDamageWithType(amount, isExplosion, isProjectile);
 
         if (self.level() instanceof ServerLevel serverLevel) {
+            data.setLastDamagedTick(serverLevel.getGameTime());
+
+            if (data.getThornsDamage() > 0 && source.getEntity() instanceof LivingEntity attacker) {
+                attacker.hurt(self.damageSources().thorns(self), data.getThornsDamage());
+            }
+
             if (data.getCurrentHP() <= 0 && Config.EXPLODE_ON_DEATH.get()) {
                 TrainHealthManager.destroyTrain(carriage.train, serverLevel);
                 TrainHealthSavedData.markDirty(serverLevel.getServer());
@@ -90,8 +106,6 @@ public abstract class AbstractContraptionEntityMixin {
         if (interactionHand != InteractionHand.MAIN_HAND) return;
         if (!player.getMainHandItem().is(ModItems.REPAIR_HAMMER.get())) return;
 
-        LOGGER.info("[ArmoredRails] Repair hammer interaction detected on train entity");
-
         if (player.level().isClientSide()) {
             cir.setReturnValue(true);
             return;
@@ -103,10 +117,7 @@ public abstract class AbstractContraptionEntityMixin {
         if (carriage == null) return;
 
         TrainHealthData data = TrainHealthManager.get(carriage.train.id);
-        if (data == null) {
-            LOGGER.info("[ArmoredRails] No health data for train {}", carriage.train.id);
-            return;
-        }
+        if (data == null) return;
 
         if (data.getCurrentHP() >= data.getMaxHP()) {
             sp.displayClientMessage(
@@ -120,20 +131,24 @@ public abstract class AbstractContraptionEntityMixin {
         if (requiredMaterial.isEmpty()) {
             requiredMaterial = Config.BASE_REPAIR_MATERIAL.get();
         }
-        ItemStack offHand = player.getOffhandItem();
-        var requiredItem = ForgeRegistries.ITEMS.getValue(new ResourceLocation(requiredMaterial));
-        if (requiredItem == null || !offHand.is(requiredItem)) {
-            sp.displayClientMessage(
-                    Component.translatable("message.create_armored_rails.wrong_material")
-                            .withStyle(ChatFormatting.RED), true);
-            cir.setReturnValue(true);
-            return;
-        }
-        offHand.shrink(1);
 
-        float before = data.getCurrentHP();
+        boolean skipConsume = data.getRepairCostReduction() > 0
+                && sp.level().getRandom().nextFloat() < data.getRepairCostReduction();
+
+        if (!skipConsume) {
+            ItemStack offHand = player.getOffhandItem();
+            var requiredItem = ForgeRegistries.ITEMS.getValue(new ResourceLocation(requiredMaterial));
+            if (requiredItem == null || !offHand.is(requiredItem)) {
+                sp.displayClientMessage(
+                        Component.translatable("message.create_armored_rails.wrong_material")
+                                .withStyle(ChatFormatting.RED), true);
+                cir.setReturnValue(true);
+                return;
+            }
+            offHand.shrink(1);
+        }
+
         data.heal(Config.REPAIR_AMOUNT_PER_HIT.get());
-        LOGGER.info("[ArmoredRails] Repaired train {} from {} to {} HP", carriage.train.id, before, data.getCurrentHP());
 
         self.level().playSound(null, self.getX(), self.getY(), self.getZ(),
                 SoundEvents.ANVIL_USE, SoundSource.BLOCKS, 0.5f, 1.2f);
@@ -156,8 +171,7 @@ public abstract class AbstractContraptionEntityMixin {
         for (StructureBlockInfo info : cc.getBlocks().values()) {
             if (info.state().getBlock() != ModBlocks.HULL_BLOCK.get()) continue;
             if (info.nbt() != null && info.nbt().contains("Inventory")) {
-                ItemStackHandler handler = new ItemStackHandler(HullMenu.HULL_SLOT_COUNT);
-                handler.deserializeNBT(info.nbt().getCompound("Inventory"));
+                ItemStackHandler handler = HullMenu.loadInventory(info.nbt().getCompound("Inventory"));
                 return UpgradeHelper.getRepairMaterial(handler.getStackInSlot(0));
             }
             return "";

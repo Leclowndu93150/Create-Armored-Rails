@@ -22,8 +22,24 @@ import net.minecraftforge.items.ItemStackHandler;
 import net.minecraftforge.items.SlotItemHandler;
 
 public class HullMenu extends AbstractContainerMenu {
-    public static final int HULL_SLOT_COUNT = 4;
-    private static final int[] MODIFIER_X = {55, 77, 99};
+    public static final int HULL_SLOT_COUNT = 5;
+
+    public static ItemStackHandler loadInventory(net.minecraft.nbt.CompoundTag nbt) {
+        ItemStackHandler handler = new ItemStackHandler(HULL_SLOT_COUNT);
+        if (nbt != null) {
+            ItemStackHandler old = new ItemStackHandler(1);
+            old.deserializeNBT(nbt);
+            for (int i = 0; i < Math.min(old.getSlots(), HULL_SLOT_COUNT); i++) {
+                handler.setStackInSlot(i, old.getStackInSlot(i));
+            }
+        }
+        return handler;
+    }
+
+    private static final int UPGRADE_X = 83;
+    private static final int UPGRADE_Y = 70;
+    private static final int[] MODIFIER_X = {83, 125, 83, 41};
+    private static final int[] MODIFIER_Y = {28, 70, 113, 70};
 
     private final ItemStackHandler hullInventory;
     private BlockPos blockPos;
@@ -51,7 +67,7 @@ public class HullMenu extends AbstractContainerMenu {
     }
 
     private void addHullSlots() {
-        addSlot(new SlotItemHandler(hullInventory, 0, 18, 41) {
+        addSlot(new SlotItemHandler(hullInventory, 0, UPGRADE_X, UPGRADE_Y) {
             @Override
             public boolean mayPlace(ItemStack stack) {
                 return UpgradeHelper.isUpgradeItem(stack);
@@ -63,9 +79,9 @@ public class HullMenu extends AbstractContainerMenu {
             }
         });
 
-        for (int i = 0; i < 3; i++) {
+        for (int i = 0; i < 4; i++) {
             final int slotIndex = i + 1;
-            addSlot(new SlotItemHandler(hullInventory, slotIndex, MODIFIER_X[i], 41) {
+            addSlot(new SlotItemHandler(hullInventory, slotIndex, MODIFIER_X[i], MODIFIER_Y[i]) {
                 @Override
                 public boolean mayPlace(ItemStack stack) {
                     if (!isModifierSlotUnlocked(slotIndex)) return false;
@@ -101,20 +117,18 @@ public class HullMenu extends AbstractContainerMenu {
         if (isContraption) {
             int entityId = buf.readInt();
             BlockPos localPos = buf.readBlockPos();
-            ItemStackHandler handler = new ItemStackHandler(HULL_SLOT_COUNT);
-            handler.deserializeNBT(buf.readNbt());
+            ItemStackHandler handler = loadInventory(buf.readNbt());
             return new HullMenu(containerId, playerInv, handler, entityId, localPos);
         } else {
             BlockPos pos = buf.readBlockPos();
-            ItemStackHandler handler = new ItemStackHandler(HULL_SLOT_COUNT);
-            handler.deserializeNBT(buf.readNbt());
+            ItemStackHandler handler = loadInventory(buf.readNbt());
             return new HullMenu(containerId, playerInv, handler, pos);
         }
     }
 
     private void addPlayerInventory(Inventory playerInv) {
-        int startX = 20;
-        int startY = 96;
+        int startX = 9;
+        int startY = 162;
         for (int row = 0; row < 3; row++) {
             for (int col = 0; col < 9; col++) {
                 addSlot(new Slot(playerInv, col + row * 9 + 9, startX + col * 18, startY + row * 18));

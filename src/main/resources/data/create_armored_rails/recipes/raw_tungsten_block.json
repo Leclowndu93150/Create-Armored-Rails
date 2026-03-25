@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "AAA",
+    "AAA",
+    "AAA"
+  ],
+  "key": {
+    "A": {
+      "tag": "forge:raw_materials/tungsten"
+    }
+  },
+  "result": {
+    "item": "create_armored_rails:raw_tungsten_block"
+  }
+}

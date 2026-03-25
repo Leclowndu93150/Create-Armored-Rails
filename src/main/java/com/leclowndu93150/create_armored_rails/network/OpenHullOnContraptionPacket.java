@@ -41,8 +41,7 @@ public class OpenHullOnContraptionPacket {
         ctx.get().enqueueWork(() -> {
             Minecraft mc = Minecraft.getInstance();
             if (mc.player == null) return;
-            ItemStackHandler handler = new ItemStackHandler(HullMenu.HULL_SLOT_COUNT);
-            handler.deserializeNBT(pkt.inventoryNBT);
+            ItemStackHandler handler = HullMenu.loadInventory(pkt.inventoryNBT);
             Inventory playerInv = mc.player.getInventory();
             HullMenu menu = new HullMenu(pkt.containerId, playerInv, handler, pkt.entityId, pkt.localPos);
             mc.player.containerMenu = menu;

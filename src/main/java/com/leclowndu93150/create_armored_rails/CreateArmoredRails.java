@@ -3,6 +3,8 @@ package com.leclowndu93150.create_armored_rails;
 import com.leclowndu93150.create_armored_rails.behaviour.HullMovingInteraction;
 import com.leclowndu93150.create_armored_rails.behaviour.VanillaBlockMovingInteraction;
 import com.leclowndu93150.create_armored_rails.client.HullScreen;
+import com.leclowndu93150.create_armored_rails.client.ModCasingCTSetup;
+import com.leclowndu93150.create_armored_rails.health.UpgradeHelper;
 import com.leclowndu93150.create_armored_rails.network.ModPackets;
 import com.leclowndu93150.create_armored_rails.registry.*;
 import com.mojang.logging.LogUtils;
@@ -35,6 +37,7 @@ public class CreateArmoredRails {
         ModBlockEntities.register(modEventBus);
         ModMenuTypes.register(modEventBus);
         ModCreativeTab.register(modEventBus);
+        ModVillagerProfessions.register(modEventBus);
 
         modEventBus.addListener(this::commonSetup);
 
@@ -43,6 +46,7 @@ public class CreateArmoredRails {
 
     private void commonSetup(final FMLCommonSetupEvent event) {
         event.enqueueWork(() -> {
+            UpgradeHelper.init();
             MovingInteractionBehaviour.REGISTRY.register(
                     ModBlocks.HULL_BLOCK.get(), new HullMovingInteraction());
             registerInteractiveBlocks();
@@ -72,6 +76,7 @@ public class CreateArmoredRails {
         public static void onClientSetup(FMLClientSetupEvent event) {
             event.enqueueWork(() -> {
                 MenuScreens.register(ModMenuTypes.HULL_MENU.get(), HullScreen::new);
+                ModCasingCTSetup.register();
             });
         }
     }

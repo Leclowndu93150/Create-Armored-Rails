@@ -13,15 +13,20 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.phys.AABB;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import java.util.Random;
 
 @Mixin(CarriageContraptionEntity.class)
@@ -64,7 +69,7 @@ public class CarriageContraptionEntityMixin {
     }
 
     @Inject(method = "tick", at = @At("TAIL"))
-    private void armoredRails$criticalFailureEffects(CallbackInfo ci) {
+    private void armoredRails$tickEffects(CallbackInfo ci) {
         CarriageContraptionEntity self = (CarriageContraptionEntity)(Object)this;
         Level level = self.level();
 
@@ -72,9 +77,38 @@ public class CarriageContraptionEntityMixin {
         if (carriage == null) return;
 
         TrainHealthData data = TrainHealthManager.get(carriage.train.id);
-        if (data == null || !data.isCriticalFailure(Config.CRITICAL_FAILURE_THRESHOLD.get())) return;
+        if (data == null) return;
 
         if (!level.isClientSide() && level instanceof ServerLevel serverLevel) {
+            if (Config.COLLISION_DAMAGE_ENABLED.get() && self.tickCount % 10 == 0) {
+                double speed = self.getDeltaMovement().length();
+                if (speed > 0.1) {
+                    AABB box = self.getBoundingBox().inflate(0.5);
+                    List<LivingEntity> entities = level.getEntitiesOfClass(LivingEntity.class, box,
+                            e -> !self.hasPassenger(e) && !(e instanceof Player));
+                    for (LivingEntity entity : entities) {
+                        float collisionDmg = (float)(entity.getMaxHealth() * Config.COLLISION_DAMAGE_MULTIPLIER.get());
+                        if (collisionDmg > 0) {
+                            data.takeDamage(collisionDmg);
+                        }
+                    }
+                }
+            }
+        }
+
+        boolean critical = data.isCriticalFailure(Config.CRITICAL_FAILURE_THRESHOLD.get());
+        if (!critical) return;
+
+        if (!level.isClientSide() && level instanceof ServerLevel serverLevel) {
+            for (Entity passenger : new ArrayList<>(self.getPassengers())) {
+                if (passenger instanceof ServerPlayer sp) {
+                    sp.stopRiding();
+                    sp.displayClientMessage(
+                            Component.translatable("message.create_armored_rails.ejected_critical")
+                                    .withStyle(ChatFormatting.DARK_RED, ChatFormatting.BOLD), true);
+                }
+            }
+
             if (Config.CRITICAL_ALARM_ENABLED.get()) {
                 int interval = Config.CRITICAL_ALARM_INTERVAL.get();
                 if (self.tickCount % interval == 0) {

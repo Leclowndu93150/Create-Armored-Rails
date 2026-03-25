@@ -90,13 +90,20 @@ public class TrainHealthManager {
     }
 
     public static void recalculateFromContraption(Train train) {
-        float upgradeHP = 0;
-        float hpBonusPercent = 0;
-        float damageReduction = 0;
-        float thresholdReduction = 0;
-        float speedBoost = 0;
         float storedHealthPercent = -1;
         boolean foundHull = false;
+        HullFrameStats frameStats = null;
+        float totalDamageReduction = 0;
+        float totalBlastProtection = 0;
+        float totalProjectileProtection = 0;
+        float totalCritReduction = 0;
+        float totalFlatSpeedBoost = 0;
+        float totalSpeedBoostFullHP = 0;
+        float totalSpeedBoostDamaged = 0;
+        int totalMobRangeReduction = 0;
+        float totalRepairCostReduction = 0;
+        float totalThornsDamage = 0;
+        int damageCooldownTicks = 0;
 
         for (Carriage carriage : train.carriages) {
             if (foundHull) break;
@@ -114,19 +121,28 @@ public class TrainHealthManager {
                     }
 
                     if (info.nbt().contains("Inventory")) {
-                        ItemStackHandler handler = new ItemStackHandler(HullMenu.HULL_SLOT_COUNT);
-                        handler.deserializeNBT(info.nbt().getCompound("Inventory"));
+                        ItemStackHandler handler = HullMenu.loadInventory(info.nbt().getCompound("Inventory"));
 
                         ItemStack upgradeStack = handler.getStackInSlot(0);
-                        upgradeHP = UpgradeHelper.getUpgradeHP(upgradeStack);
-                        int unlockedSlots = UpgradeHelper.getModifierSlotCount(upgradeStack);
+                        frameStats = UpgradeHelper.getHullFrameStats(upgradeStack);
+                        int unlockedSlots = frameStats != null ? frameStats.modifierSlots() : 0;
 
-                        for (int i = 1; i <= Math.min(unlockedSlots, 3); i++) {
+                        for (int i = 1; i <= Math.min(unlockedSlots, 4); i++) {
                             ItemStack modStack = handler.getStackInSlot(i);
-                            damageReduction += UpgradeHelper.getDamageReduction(modStack);
-                            thresholdReduction += UpgradeHelper.getThresholdReduction(modStack);
-                            hpBonusPercent += UpgradeHelper.getHPBonusPercent(modStack);
-                            speedBoost += UpgradeHelper.getSpeedBoost(modStack);
+                            ModifierStats ms = UpgradeHelper.getModifierStats(modStack);
+                            if (ms == null) continue;
+                            totalDamageReduction += ms.damageReduction();
+                            totalBlastProtection += ms.blastProtection();
+                            totalCritReduction += ms.criticalThresholdReduction();
+                            totalFlatSpeedBoost += ms.speedBoost();
+                            totalSpeedBoostFullHP += ms.speedBoostAtFullHP();
+                            totalSpeedBoostDamaged += ms.speedBoostWhenDamaged();
+                            totalMobRangeReduction += ms.mobRangeReduction();
+                            totalRepairCostReduction += ms.repairCostReduction();
+                            totalThornsDamage += ms.thornsDamage();
+                            if (ms.damageCooldownTicks() > damageCooldownTicks) {
+                                damageCooldownTicks = ms.damageCooldownTicks();
+                            }
                         }
                     }
                 }
@@ -136,23 +152,55 @@ public class TrainHealthManager {
 
         if (!foundHull) return;
 
-        float baseHP = Config.BASE_TRAIN_HP.get() + upgradeHP;
-        float totalMaxHP = baseHP * (1f + hpBonusPercent);
+        float frameHP = frameStats != null ? frameStats.hpBonus() : 0;
+        float totalMaxHP = Config.BASE_TRAIN_HP.get() + frameHP;
+
+        float frameDmgRed = frameStats != null ? frameStats.damageReduction() : 0;
+        float frameBlast = frameStats != null ? frameStats.blastProtection() : 0;
+        float frameProj = frameStats != null ? frameStats.projectileProtection() : 0;
+        float frameCrit = frameStats != null ? frameStats.criticalThresholdModifier() : 0;
+        float frameSpeed = frameStats != null ? frameStats.speedModifier() : 0;
+        int frameMobRange = frameStats != null ? frameStats.mobRangeModifier() : 0;
+        float frameRepairCost = frameStats != null ? frameStats.repairCostReduction() : 0;
+        float frameSpeedPenaltyRed = frameStats != null ? frameStats.reducedSpeedPenalty() : 0;
+        boolean fireResistant = frameStats != null && frameStats.fireResistant();
+
         TrainHealthData data = healthMap.get(train.id);
+        float oldPercent = data != null ? data.getHealthPercentage() : -1;
+        long oldLastDamaged = data != null ? data.getLastDamagedTick() : 0;
+
         if (data == null) {
-            data = new TrainHealthData(totalMaxHP, damageReduction, thresholdReduction, speedBoost);
+            data = new TrainHealthData(totalMaxHP, frameDmgRed + totalDamageReduction,
+                    Math.abs(frameCrit) + totalCritReduction);
             if (storedHealthPercent >= 0) {
                 data.setCurrentHP(totalMaxHP * storedHealthPercent);
             }
             healthMap.put(train.id, data);
         } else {
-            float oldPercentage = data.getHealthPercentage();
             data.setMaxHP(totalMaxHP);
-            data.setCurrentHP(totalMaxHP * oldPercentage);
-            data.setDamageReduction(damageReduction);
-            data.setCriticalThresholdReduction(thresholdReduction);
-            data.setSpeedBoost(speedBoost);
+            if (storedHealthPercent >= 0) {
+                data.setCurrentHP(totalMaxHP * storedHealthPercent);
+            } else if (oldPercent >= 0) {
+                data.setCurrentHP(totalMaxHP * oldPercent);
+            }
+            data.setDamageReduction(frameDmgRed + totalDamageReduction);
+            data.setCriticalThresholdReduction(Math.abs(frameCrit) + totalCritReduction);
         }
+
+        data.setBlastProtection(frameBlast + totalBlastProtection);
+        data.setProjectileProtection(frameProj);
+        data.setSpeedModifier(frameSpeed);
+        data.setMobRangeModifier(frameMobRange - totalMobRangeReduction);
+        data.setRepairCostReduction(frameRepairCost + totalRepairCostReduction);
+        data.setFireResistant(fireResistant);
+        data.setReducedSpeedPenalty(frameSpeedPenaltyRed);
+        data.setThornsDamage(totalThornsDamage);
+        data.setConditionalSpeedBoostFullHP(totalSpeedBoostFullHP);
+        data.setConditionalSpeedBoostDamaged(totalSpeedBoostDamaged);
+        data.setDamageCooldownTicks(damageCooldownTicks);
+        data.setFlatSpeedBoost(totalFlatSpeedBoost);
+        data.setLastDamagedTick(oldLastDamaged);
+
         checkedTrains.remove(train.id);
     }
 

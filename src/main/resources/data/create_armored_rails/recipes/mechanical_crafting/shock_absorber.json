@@ -1,0 +1,26 @@
+{
+  "type": "create:mechanical_crafting",
+  "pattern": [
+    " A ",
+    "BCB",
+    "BDB",
+    " A "
+  ],
+  "key": {
+    "A": {
+      "item": "create:andesite_alloy"
+    },
+    "B": {
+      "tag": "forge:plates/iron"
+    },
+    "C": {
+      "item": "minecraft:slime_ball"
+    },
+    "D": {
+      "item": "create:shaft"
+    }
+  },
+  "result": {
+    "item": "create_armored_rails:shock_absorber"
+  }
+}
