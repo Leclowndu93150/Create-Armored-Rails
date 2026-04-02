@@ -205,12 +205,6 @@ public class TrainHealthManager {
     }
 
     public static void destroyTrain(Train train, ServerLevel serverLevel) {
-        boolean explode = Config.EXPLODE_ON_DEATH.get();
-        double powerPerBlock = Config.EXPLOSION_POWER_PER_BLOCK.get();
-
-        List<Vec3> explosionPositions = new ArrayList<>();
-        List<Float> explosionPowers = new ArrayList<>();
-
         for (Carriage carriage : train.carriages) {
             CarriageContraptionEntity entity = carriage.anyAvailableEntity();
             if (entity == null) continue;
@@ -219,41 +213,28 @@ public class TrainHealthManager {
                 passenger.stopRiding();
             }
 
-            if (explode && entity.getContraption() instanceof CarriageContraption cc) {
+            if (entity.getContraption() instanceof CarriageContraption cc) {
                 int blockCount = cc.getBlocks().size();
+                double powerPerBlock = Config.EXPLOSION_POWER_PER_BLOCK.get();
                 float explosionPower = (float)(blockCount * powerPerBlock);
-                explosionPower = Math.max(2.0f, Math.min(explosionPower, 20.0f));
+                explosionPower = Math.max(1.0f, Math.min(explosionPower, 10.0f));
 
-                List<BlockPos> blockPositions = new ArrayList<>(cc.getBlocks().keySet());
-                int explosionCount = Math.max(1, blockCount / 10);
-                explosionCount = Math.min(explosionCount, 8);
+                Vec3 center = entity.position().add(0, 1, 0);
+                serverLevel.explode(null, center.x, center.y, center.z,
+                        explosionPower, Level.ExplosionInteraction.NONE);
 
-                float perExplosionPower = explosionPower / explosionCount;
-
-                for (int i = 0; i < explosionCount; i++) {
-                    int index = (int)((long)i * blockPositions.size() / explosionCount);
-                    BlockPos localPos = blockPositions.get(index);
-                    Vec3 worldPos = entity.toGlobalVector(Vec3.atCenterOf(localPos), 1.0f);
-                    explosionPositions.add(worldPos);
-                    explosionPowers.add(perExplosionPower);
+                double radius = explosionPower * 2;
+                for (Entity nearby : serverLevel.getEntities(entity,
+                        entity.getBoundingBox().inflate(radius))) {
+                    if (nearby instanceof net.minecraft.world.entity.LivingEntity living) {
+                        double dist = living.distanceTo(entity);
+                        if (dist < radius) {
+                            float dmg = (float)((1.0 - dist / radius) * explosionPower * 4);
+                            living.hurt(serverLevel.damageSources().explosion(null, null), dmg);
+                        }
+                    }
                 }
             }
-
-            entity.discard();
-        }
-
-        Create.RAILWAYS.removeTrain(train.id);
-        AllPackets.getChannel().send(PacketDistributor.ALL.noArg(), new TrainPacket(train, false));
-        remove(train.id);
-
-        Level.ExplosionInteraction interaction = Config.EXPLOSION_NON_DESTRUCTIVE.get()
-                ? Level.ExplosionInteraction.NONE
-                : Level.ExplosionInteraction.TNT;
-
-        for (int i = 0; i < explosionPositions.size(); i++) {
-            Vec3 pos = explosionPositions.get(i);
-            serverLevel.explode(null, pos.x, pos.y, pos.z,
-                    explosionPowers.get(i), interaction);
         }
     }
 

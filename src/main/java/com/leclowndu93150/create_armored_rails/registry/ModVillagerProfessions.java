@@ -2,19 +2,19 @@ package com.leclowndu93150.create_armored_rails.registry;
 
 import com.google.common.collect.ImmutableSet;
 import com.leclowndu93150.create_armored_rails.CreateArmoredRails;
-import net.minecraft.core.registries.Registries;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.entity.ai.village.poi.PoiType;
 import net.minecraft.world.entity.npc.VillagerProfession;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.registries.DeferredRegister;
+import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
 
 public class ModVillagerProfessions {
     public static final DeferredRegister<PoiType> POI_TYPES =
-            DeferredRegister.create(Registries.POINT_OF_INTEREST_TYPE, CreateArmoredRails.MODID);
+            DeferredRegister.create(ForgeRegistries.POI_TYPES, CreateArmoredRails.MODID);
     public static final DeferredRegister<VillagerProfession> PROFESSIONS =
-            DeferredRegister.create(Registries.VILLAGER_PROFESSION, CreateArmoredRails.MODID);
+            DeferredRegister.create(ForgeRegistries.VILLAGER_PROFESSIONS, CreateArmoredRails.MODID);
 
     public static final RegistryObject<PoiType> MECHANIC_POI = POI_TYPES.register("mechanic",
             () -> new PoiType(ImmutableSet.copyOf(ModBlocks.HULL_BLOCK.get().getStateDefinition().getPossibleStates()),

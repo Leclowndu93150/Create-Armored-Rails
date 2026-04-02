@@ -100,11 +100,15 @@ public class TargetTrainGoal extends Goal {
         Vec3 targetPos = target.position();
         double distSq = mob.distanceToSqr(target);
 
-        if (distSq > 9.0) {
+        double bbDist = mob.getBoundingBox().distanceToSqr(targetPos);
+
+        if (bbDist > 4.0) {
             mob.getNavigation().moveTo(targetPos.x, targetPos.y, targetPos.z, 1.2);
+            if (distSq < 25.0) {
+                mob.getMoveControl().setWantedPosition(targetPos.x, targetPos.y, targetPos.z, 1.2);
+            }
         } else {
             mob.getNavigation().stop();
-            mob.getMoveControl().setWantedPosition(targetPos.x, targetPos.y, targetPos.z, 1.2);
             if (attackCooldown <= 0) {
                 target.hurt(mob.damageSources().mobAttack(mob),
                         (float) mob.getAttributeBaseValue(Attributes.ATTACK_DAMAGE));

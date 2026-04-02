@@ -9,9 +9,6 @@
     "create_armored_rails:tungsten_alloy_block",
     "create_armored_rails:tungsten_plating_block",
     "create_armored_rails:tungsten_alloy_plating_block",
-    "create_armored_rails:encased_steel_plating",
-    "create_armored_rails:encased_tungsten_plating",
-    "create_armored_rails:encased_tungsten_alloy_plating",
     "create_armored_rails:steel_casing_connected",
     "create_armored_rails:tungsten_casing_connected",
     "create_armored_rails:tungsten_alloy_casing_connected"

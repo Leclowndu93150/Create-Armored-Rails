@@ -66,6 +66,14 @@ public class Config {
     public static final ForgeConfigSpec.BooleanValue COLLISION_DAMAGE_ENABLED;
     public static final ForgeConfigSpec.DoubleValue COLLISION_DAMAGE_MULTIPLIER;
 
+    // Temperature damage
+    public static final ForgeConfigSpec.BooleanValue TEMPERATURE_DAMAGE_ENABLED;
+    public static final ForgeConfigSpec.IntValue TEMPERATURE_DAMAGE_INTERVAL;
+    public static final ForgeConfigSpec.DoubleValue TEMPERATURE_DAMAGE_AMOUNT;
+    public static final ForgeConfigSpec.DoubleValue TEMPERATURE_COLD_THRESHOLD;
+    public static final ForgeConfigSpec.DoubleValue TEMPERATURE_HOT_THRESHOLD;
+    public static final ForgeConfigSpec.DoubleValue TEMPERATURE_STORM_MULTIPLIER;
+
     // Custom items
     public static final ForgeConfigSpec.ConfigValue<List<? extends String>> CUSTOM_UPGRADES;
     public static final ForgeConfigSpec.ConfigValue<List<? extends String>> CUSTOM_MODIFIERS;
@@ -82,7 +90,7 @@ public class Config {
         CRITICAL_FAILURE_THRESHOLD = BUILDER.comment("HP percentage below which train enters critical failure")
                 .defineInRange("criticalFailureThreshold", 0.30, 0.0, 1.0);
         BASE_MOB_RANGE = BUILDER.comment("Base mob detection range for trains")
-                .defineInRange("baseMobRange", 3.0, 0.0, 128.0);
+                .defineInRange("baseMobRange", 16.0, 0.0, 128.0);
         BUILDER.pop();
 
         // Hull Frames
@@ -302,6 +310,21 @@ public class Config {
         COLLISION_DAMAGE_ENABLED = BUILDER.comment("If true, trains take damage when colliding with entities")
                 .define("collisionDamageEnabled", true);
         COLLISION_DAMAGE_MULTIPLIER = BUILDER.defineInRange("collisionDamageMultiplier", 0.5, 0.0, 10.0);
+        BUILDER.pop();
+
+        BUILDER.push("temperatureDamage");
+        TEMPERATURE_DAMAGE_ENABLED = BUILDER.comment("If true, extreme biome temperatures damage trains over time (default off)")
+                .define("enabled", false);
+        TEMPERATURE_DAMAGE_INTERVAL = BUILDER.comment("Ticks between temperature damage ticks")
+                .defineInRange("intervalTicks", 100, 20, 1200);
+        TEMPERATURE_DAMAGE_AMOUNT = BUILDER.comment("Base damage per tick from extreme temperatures")
+                .defineInRange("damageAmount", 1.0, 0.1, 100.0);
+        TEMPERATURE_COLD_THRESHOLD = BUILDER.comment("Biome temperature below which cold damage applies (vanilla: snowy biomes ~0.0)")
+                .defineInRange("coldThreshold", 0.05, -2.0, 2.0);
+        TEMPERATURE_HOT_THRESHOLD = BUILDER.comment("Biome temperature above which heat damage applies (vanilla: desert ~2.0)")
+                .defineInRange("hotThreshold", 1.5, -2.0, 3.0);
+        TEMPERATURE_STORM_MULTIPLIER = BUILDER.comment("Damage multiplier during rain/thunder storms")
+                .defineInRange("stormMultiplier", 2.0, 1.0, 10.0);
         BUILDER.pop();
 
         BUILDER.push("customItems");

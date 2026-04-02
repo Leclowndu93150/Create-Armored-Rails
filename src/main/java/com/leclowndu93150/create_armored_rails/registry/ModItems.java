@@ -30,12 +30,6 @@ public class ModItems {
             () -> new BlockItem(ModBlocks.TUNGSTEN_PLATING_BLOCK.get(), new Item.Properties()));
     public static final RegistryObject<Item> TUNGSTEN_ALLOY_PLATING_BLOCK_ITEM = ITEMS.register("tungsten_alloy_plating_block",
             () -> new BlockItem(ModBlocks.TUNGSTEN_ALLOY_PLATING_BLOCK.get(), new Item.Properties()));
-    public static final RegistryObject<Item> ENCASED_STEEL_PLATING_ITEM = ITEMS.register("encased_steel_plating",
-            () -> new BlockItem(ModBlocks.ENCASED_STEEL_PLATING.get(), new Item.Properties()));
-    public static final RegistryObject<Item> ENCASED_TUNGSTEN_PLATING_ITEM = ITEMS.register("encased_tungsten_plating",
-            () -> new BlockItem(ModBlocks.ENCASED_TUNGSTEN_PLATING.get(), new Item.Properties()));
-    public static final RegistryObject<Item> ENCASED_TUNGSTEN_ALLOY_PLATING_ITEM = ITEMS.register("encased_tungsten_alloy_plating",
-            () -> new BlockItem(ModBlocks.ENCASED_TUNGSTEN_ALLOY_PLATING.get(), new Item.Properties()));
     public static final RegistryObject<Item> STEEL_CASING_CONNECTED_ITEM = ITEMS.register("steel_casing_connected",
             () -> new BlockItem(ModBlocks.STEEL_CASING_CONNECTED.get(), new Item.Properties()));
     public static final RegistryObject<Item> TUNGSTEN_CASING_CONNECTED_ITEM = ITEMS.register("tungsten_casing_connected",

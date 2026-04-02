@@ -15,7 +15,6 @@ public class ModCreativeTab {
 
     public static final RegistryObject<CreativeModeTab> TAB = TABS.register("main",
             () -> CreativeModeTab.builder()
-                    .withTabsBefore(CreativeModeTabs.COMBAT)
                     .title(Component.translatable("itemGroup." + CreateArmoredRails.MODID))
                     .icon(() -> ModItems.HULL_BLOCK_ITEM.get().getDefaultInstance())
                     .displayItems((parameters, output) -> {
@@ -57,9 +56,6 @@ public class ModCreativeTab {
                         output.accept(ModItems.TUNGSTEN_ALLOY_BLOCK_ITEM.get());
                         output.accept(ModItems.TUNGSTEN_PLATING_BLOCK_ITEM.get());
                         output.accept(ModItems.TUNGSTEN_ALLOY_PLATING_BLOCK_ITEM.get());
-                        output.accept(ModItems.ENCASED_STEEL_PLATING_ITEM.get());
-                        output.accept(ModItems.ENCASED_TUNGSTEN_PLATING_ITEM.get());
-                        output.accept(ModItems.ENCASED_TUNGSTEN_ALLOY_PLATING_ITEM.get());
                         output.accept(ModItems.STEEL_CASING_CONNECTED_ITEM.get());
                         output.accept(ModItems.TUNGSTEN_CASING_CONNECTED_ITEM.get());
                         output.accept(ModItems.TUNGSTEN_ALLOY_CASING_CONNECTED_ITEM.get());

@@ -16,7 +16,9 @@ atlassian-ide-plugin.xml
 
 # Compiled class file
 *.class
-
+run-data
+run
+src/generated
 # Log file
 *.log
 

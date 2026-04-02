@@ -71,24 +71,6 @@ public class ModBlocks {
                     .strength(5.0f, 8.0f)
                     .sound(SoundType.NETHERITE_BLOCK)));
 
-    public static final RegistryObject<Block> ENCASED_STEEL_PLATING = BLOCKS.register("encased_steel_plating",
-            () -> new Block(BlockBehaviour.Properties.of()
-                    .mapColor(MapColor.METAL)
-                    .strength(4.0f, 6.0f)
-                    .sound(SoundType.NETHERITE_BLOCK)));
-
-    public static final RegistryObject<Block> ENCASED_TUNGSTEN_PLATING = BLOCKS.register("encased_tungsten_plating",
-            () -> new Block(BlockBehaviour.Properties.of()
-                    .mapColor(MapColor.COLOR_GRAY)
-                    .strength(5.0f, 8.0f)
-                    .sound(SoundType.NETHERITE_BLOCK)));
-
-    public static final RegistryObject<Block> ENCASED_TUNGSTEN_ALLOY_PLATING = BLOCKS.register("encased_tungsten_alloy_plating",
-            () -> new Block(BlockBehaviour.Properties.of()
-                    .mapColor(MapColor.COLOR_GRAY)
-                    .strength(6.0f, 10.0f)
-                    .sound(SoundType.NETHERITE_BLOCK)));
-
     public static final RegistryObject<Block> STEEL_CASING_CONNECTED = BLOCKS.register("steel_casing_connected",
             () -> new CasingBlock(BlockBehaviour.Properties.of()
                     .mapColor(MapColor.METAL)

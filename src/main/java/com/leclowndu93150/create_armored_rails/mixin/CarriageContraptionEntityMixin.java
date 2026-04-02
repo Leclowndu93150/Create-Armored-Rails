@@ -94,6 +94,23 @@ public class CarriageContraptionEntityMixin {
                     }
                 }
             }
+
+            if (Config.TEMPERATURE_DAMAGE_ENABLED.get()
+                    && self.tickCount % Config.TEMPERATURE_DAMAGE_INTERVAL.get() == 0) {
+                float biomeTemp = serverLevel.getBiome(self.blockPosition()).value().getBaseTemperature();
+                float dmg = 0;
+                if (biomeTemp < Config.TEMPERATURE_COLD_THRESHOLD.get().floatValue()) {
+                    dmg = Config.TEMPERATURE_DAMAGE_AMOUNT.get().floatValue();
+                } else if (biomeTemp > Config.TEMPERATURE_HOT_THRESHOLD.get().floatValue()) {
+                    dmg = Config.TEMPERATURE_DAMAGE_AMOUNT.get().floatValue();
+                }
+                if (dmg > 0) {
+                    if (serverLevel.isRaining() || serverLevel.isThundering()) {
+                        dmg *= Config.TEMPERATURE_STORM_MULTIPLIER.get().floatValue();
+                    }
+                    data.takeDamage(dmg);
+                }
+            }
         }
 
         boolean critical = data.isCriticalFailure(Config.CRITICAL_FAILURE_THRESHOLD.get());
