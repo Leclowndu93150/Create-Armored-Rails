@@ -1,6 +1,8 @@
 package com.leclowndu93150.create_armored_rails.mixin;
 
 import com.leclowndu93150.create_armored_rails.Config;
+import com.leclowndu93150.create_armored_rails.compat.vs.VSCompat;
+import com.leclowndu93150.create_armored_rails.compat.vs.VSTrainHelper;
 import com.leclowndu93150.create_armored_rails.health.TrainHealthData;
 import com.leclowndu93150.create_armored_rails.health.TrainHealthManager;
 import com.simibubi.create.content.trains.entity.Carriage;
@@ -83,9 +85,15 @@ public class CarriageContraptionEntityMixin {
             if (Config.COLLISION_DAMAGE_ENABLED.get() && self.tickCount % 10 == 0) {
                 double speed = self.getDeltaMovement().length();
                 if (speed > 0.1) {
-                    AABB box = self.getBoundingBox().inflate(0.5);
-                    List<LivingEntity> entities = level.getEntitiesOfClass(LivingEntity.class, box,
-                            e -> !self.hasPassenger(e) && !(e instanceof Player));
+                    java.util.function.Predicate<LivingEntity> collisionFilter =
+                            e -> !self.hasPassenger(e) && !(e instanceof Player);
+                    List<LivingEntity> entities;
+                    if (VSCompat.isActive()) {
+                        entities = VSTrainHelper.findEntitiesNearTrainWorldSpace(level, self, 0.5, collisionFilter::test);
+                    } else {
+                        AABB box = self.getBoundingBox().inflate(0.5);
+                        entities = level.getEntitiesOfClass(LivingEntity.class, box, collisionFilter::test);
+                    }
                     for (LivingEntity entity : entities) {
                         float collisionDmg = (float)(entity.getMaxHealth() * Config.COLLISION_DAMAGE_MULTIPLIER.get());
                         if (collisionDmg > 0) {

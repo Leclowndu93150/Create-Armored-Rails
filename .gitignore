@@ -13,7 +13,8 @@ out/
 Create-mc1.20.1-dev
 # JIRA plugin
 atlassian-ide-plugin.xml
-
+Create-Interactive-1.20.x-main
+Valkyrien-Skies-2-1.20.1-main
 # Compiled class file
 *.class
 run-data

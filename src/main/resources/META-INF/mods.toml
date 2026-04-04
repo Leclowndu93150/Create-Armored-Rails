@@ -75,3 +75,17 @@ mandatory=true
 versionRange="[3.6.0,)"
 ordering="NONE"
 side="BOTH"
+
+[[dependencies."${mod_id}"]]
+modId="valkyrienskies"
+mandatory=false
+versionRange="[2.4.0,)"
+ordering="AFTER"
+side="BOTH"
+
+[[dependencies."${mod_id}"]]
+modId="create_interactive"
+mandatory=false
+versionRange="[1.2.0,)"
+ordering="AFTER"
+side="BOTH"

@@ -1,6 +1,8 @@
 package com.leclowndu93150.create_armored_rails.ai;
 
 import com.leclowndu93150.create_armored_rails.Config;
+import com.leclowndu93150.create_armored_rails.compat.vs.VSCompat;
+import com.leclowndu93150.create_armored_rails.compat.vs.VSTrainHelper;
 import com.leclowndu93150.create_armored_rails.health.TrainHealthData;
 import com.leclowndu93150.create_armored_rails.health.TrainHealthManager;
 import com.simibubi.create.content.trains.entity.CarriageContraptionEntity;
@@ -11,6 +13,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 
+import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.List;
 
@@ -37,11 +40,15 @@ public class TargetTrainGoal extends Goal {
 
         double maxSearchRange = Config.BASE_MOB_RANGE.get() + 10;
         AABB searchBox = mob.getBoundingBox().inflate(maxSearchRange);
-        List<CarriageContraptionEntity> trains = mob.level()
-                .getEntitiesOfClass(CarriageContraptionEntity.class, searchBox, entity -> {
-                    var carriage = entity.getCarriage();
-                    return carriage != null && TrainHealthManager.get(carriage.train.id) != null;
-                });
+        java.util.function.Predicate<CarriageContraptionEntity> filter = entity -> {
+            var carriage = entity.getCarriage();
+            return carriage != null && TrainHealthManager.get(carriage.train.id) != null;
+        };
+        List<CarriageContraptionEntity> trains = new ArrayList<>(mob.level()
+                .getEntitiesOfClass(CarriageContraptionEntity.class, searchBox, filter::test));
+        if (VSCompat.isActive()) {
+            trains.addAll(VSTrainHelper.findTrainsOnShips(mob.level(), mob.position(), maxSearchRange, filter::test));
+        }
 
         if (trains.isEmpty()) return false;
 
@@ -59,13 +66,14 @@ public class TargetTrainGoal extends Goal {
             double effectiveRange = Config.BASE_MOB_RANGE.get() + data.getMobRangeModifier();
             if (effectiveRange <= 0) continue;
 
-            double dist = mob.distanceToSqr(train);
+            double dist = VSCompat.isActive() ? VSTrainHelper.distanceToSqrVS(mob, train) : mob.distanceToSqr(train);
             if (dist > effectiveRange * effectiveRange) continue;
 
             if (proximityRange > 0) {
                 boolean playerNearby = false;
                 for (Player p : mob.level().players()) {
-                    if (p.distanceToSqr(train) < proximityRange * proximityRange) {
+                    double playerDist = VSCompat.isActive() ? VSTrainHelper.distanceToSqrVS(p, train) : p.distanceToSqr(train);
+                    if (playerDist < proximityRange * proximityRange) {
                         playerNearby = true;
                         break;
                     }
@@ -89,16 +97,18 @@ public class TargetTrainGoal extends Goal {
         TrainHealthData data = TrainHealthManager.get(carriage.train.id);
         if (data == null) return false;
         double effectiveRange = Config.BASE_MOB_RANGE.get() + data.getMobRangeModifier();
-        return mob.distanceToSqr(target) <= effectiveRange * effectiveRange * 1.5;
+        double dist = VSCompat.isActive() ? VSTrainHelper.distanceToSqrVS(mob, target) : mob.distanceToSqr(target);
+        return dist <= effectiveRange * effectiveRange * 1.5;
     }
 
     @Override
     public void tick() {
         if (target == null) return;
-        mob.getLookControl().setLookAt(target);
 
-        Vec3 targetPos = target.position();
-        double distSq = mob.distanceToSqr(target);
+        Vec3 targetPos = VSCompat.isActive() ? VSTrainHelper.getWorldPosition(target) : target.position();
+        mob.getLookControl().setLookAt(targetPos.x, targetPos.y, targetPos.z);
+
+        double distSq = VSCompat.isActive() ? VSTrainHelper.distanceToSqrVS(mob, target) : mob.distanceToSqr(target);
 
         double bbDist = mob.getBoundingBox().distanceToSqr(targetPos);
 

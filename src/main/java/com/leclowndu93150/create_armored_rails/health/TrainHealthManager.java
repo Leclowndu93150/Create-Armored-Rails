@@ -205,6 +205,7 @@ public class TrainHealthManager {
     }
 
     public static void destroyTrain(Train train, ServerLevel serverLevel) {
+        remove(train.id);
         for (Carriage carriage : train.carriages) {
             CarriageContraptionEntity entity = carriage.anyAvailableEntity();
             if (entity == null) continue;
