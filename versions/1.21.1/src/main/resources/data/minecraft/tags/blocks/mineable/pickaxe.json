@@ -1,0 +1,16 @@
+{
+  "replace": false,
+  "values": [
+    "create_armored_rails:hull",
+    "create_armored_rails:tungsten_ore",
+    "create_armored_rails:deepslate_tungsten_ore",
+    "create_armored_rails:raw_tungsten_block",
+    "create_armored_rails:tungsten_block",
+    "create_armored_rails:tungsten_alloy_block",
+    "create_armored_rails:tungsten_plating_block",
+    "create_armored_rails:tungsten_alloy_plating_block",
+    "create_armored_rails:steel_casing_connected",
+    "create_armored_rails:tungsten_casing_connected",
+    "create_armored_rails:tungsten_alloy_casing_connected"
+  ]
+}

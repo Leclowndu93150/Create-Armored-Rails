@@ -20,6 +20,7 @@ Valkyrien-Skies-2-1.20.1-main
 run-data
 run
 src/generated
+versions/*/src/generated
 # Log file
 *.log
 

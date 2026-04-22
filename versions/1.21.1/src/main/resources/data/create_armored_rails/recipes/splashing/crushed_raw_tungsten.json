@@ -1,0 +1,19 @@
+{
+  "type": "create:splashing",
+  "ingredients": [
+    {
+      "item": "create_armored_rails:crushed_raw_tungsten"
+    }
+  ],
+  "results": [
+    {
+      "item": "create_armored_rails:tungsten_nugget",
+      "count": 9
+    },
+    {
+      "item": "create_armored_rails:tungsten_nugget",
+      "count": 4,
+      "chance": 0.5
+    }
+  ]
+}

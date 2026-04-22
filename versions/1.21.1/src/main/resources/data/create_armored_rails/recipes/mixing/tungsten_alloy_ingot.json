@@ -1,0 +1,22 @@
+{
+  "type": "create:mixing",
+  "ingredients": [
+    {
+      "tag": "forge:ingots/tungsten"
+    },
+    {
+      "item": "minecraft:coal"
+    },
+    {
+      "item": "minecraft:netherite_scrap"
+    }
+  ],
+  "results": [
+    {
+      "item": "create_armored_rails:tungsten_alloy_ingot",
+      "count": 2
+    }
+  ],
+  "heatRequirement": "superheated",
+  "processingTime": 200
+}

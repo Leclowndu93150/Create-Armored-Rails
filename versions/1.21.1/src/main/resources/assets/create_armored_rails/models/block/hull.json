@@ -1,0 +1,12 @@
+{
+  "parent": "minecraft:block/cube",
+  "textures": {
+    "up": "create_armored_rails:block/hull_assembly_top",
+    "down": "create_armored_rails:block/hull_assembly_bottom",
+    "north": "create_armored_rails:block/hull_assembly_side",
+    "south": "create_armored_rails:block/hull_assembly_side",
+    "east": "create_armored_rails:block/hull_assembly_side",
+    "west": "create_armored_rails:block/hull_assembly_side",
+    "particle": "create_armored_rails:block/hull_assembly_side"
+  }
+}

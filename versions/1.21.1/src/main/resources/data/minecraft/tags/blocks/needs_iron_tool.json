@@ -1,0 +1,10 @@
+{
+  "replace": false,
+  "values": [
+    "create_armored_rails:tungsten_ore",
+    "create_armored_rails:deepslate_tungsten_ore",
+    "create_armored_rails:tungsten_block",
+    "create_armored_rails:tungsten_alloy_block",
+    "create_armored_rails:raw_tungsten_block"
+  ]
+}
