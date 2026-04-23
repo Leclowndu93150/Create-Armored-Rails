@@ -1,0 +1,13 @@
+{
+  "type": "create:pressing",
+  "ingredients": [
+    {
+      "tag": "c:ingots/tungsten"
+    }
+  ],
+  "results": [
+    {
+      "id": "create_armored_rails:tungsten_sheet"
+    }
+  ]
+}

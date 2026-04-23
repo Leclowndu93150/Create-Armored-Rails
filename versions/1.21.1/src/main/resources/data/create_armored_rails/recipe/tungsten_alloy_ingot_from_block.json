@@ -1,0 +1,12 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    {
+      "tag": "c:storage_blocks/tungsten_alloy"
+    }
+  ],
+  "result": {
+    "count": 9,
+    "id": "create_armored_rails:tungsten_alloy_ingot"
+  }
+}

@@ -1,0 +1,11 @@
+{
+  "type": "minecraft:blasting",
+  "ingredient": {
+    "item": "create_armored_rails:crushed_raw_tungsten"
+  },
+  "result": {
+    "id": "create_armored_rails:tungsten_nugget"
+  },
+  "experience": 0.1,
+  "cookingtime": 100
+}

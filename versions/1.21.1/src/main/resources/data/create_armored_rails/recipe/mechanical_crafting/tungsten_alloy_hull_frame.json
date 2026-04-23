@@ -1,0 +1,25 @@
+{
+  "type": "create:mechanical_crafting",
+  "pattern": [
+    " AAA ",
+    "AB BA",
+    "A C A",
+    "AB BA",
+    " AAA "
+  ],
+  "key": {
+    "A": {
+      "tag": "c:plates/tungsten_alloy"
+    },
+    "B": {
+      "item": "create:sturdy_sheet"
+    },
+    "C": {
+      "item": "create_armored_rails:tungsten_alloy_block"
+    }
+  },
+  "result": {
+    "id": "create_armored_rails:tungsten_alloy_hull_frame"
+  },
+  "accept_mirrored": true
+}

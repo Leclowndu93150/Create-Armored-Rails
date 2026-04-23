@@ -1,0 +1,23 @@
+{
+  "type": "create:mechanical_crafting",
+  "pattern": [
+    "ABA",
+    "BCB",
+    "ABA"
+  ],
+  "key": {
+    "A": {
+      "tag": "c:plates/iron"
+    },
+    "B": {
+      "item": "create:sturdy_sheet"
+    },
+    "C": {
+      "tag": "c:storage_blocks/iron"
+    }
+  },
+  "result": {
+    "id": "create_armored_rails:reinforced_bulkheads"
+  },
+  "accept_mirrored": true
+}

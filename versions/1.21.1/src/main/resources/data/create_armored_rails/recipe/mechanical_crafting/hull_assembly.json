@@ -1,0 +1,31 @@
+{
+  "type": "create:mechanical_crafting",
+  "pattern": [
+    " AAA ",
+    "ACBCA",
+    "ADEDA",
+    "ACBCA",
+    " AAA "
+  ],
+  "key": {
+    "A": {
+      "tag": "c:ingots/tungsten"
+    },
+    "B": {
+      "item": "create:precision_mechanism"
+    },
+    "C": {
+      "item": "create:sturdy_sheet"
+    },
+    "D": {
+      "item": "create:electron_tube"
+    },
+    "E": {
+      "item": "create:railway_casing"
+    }
+  },
+  "result": {
+    "id": "create_armored_rails:hull"
+  },
+  "accept_mirrored": true
+}

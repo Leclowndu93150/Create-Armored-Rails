@@ -1,0 +1,22 @@
+{
+  "type": "create:mechanical_crafting",
+  "pattern": [
+    " AAA ",
+    "AA AA",
+    "A B A",
+    "AA AA",
+    " AAA "
+  ],
+  "key": {
+    "A": {
+      "item": "create:andesite_alloy"
+    },
+    "B": {
+      "item": "minecraft:andesite"
+    }
+  },
+  "result": {
+    "id": "create_armored_rails:andesite_hull_frame"
+  },
+  "accept_mirrored": true
+}

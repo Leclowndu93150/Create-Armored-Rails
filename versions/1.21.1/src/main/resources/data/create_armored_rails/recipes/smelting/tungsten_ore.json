@@ -1,9 +1,0 @@
-{
-  "type": "minecraft:smelting",
-  "ingredient": {
-    "tag": "forge:ores/tungsten"
-  },
-  "result": "create_armored_rails:tungsten_ingot",
-  "experience": 1.0,
-  "cookingtime": 200
-}

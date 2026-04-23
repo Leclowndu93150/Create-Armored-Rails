@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "AAA",
+    "AAA",
+    "AAA"
+  ],
+  "key": {
+    "A": {
+      "tag": "c:ingots/tungsten_alloy"
+    }
+  },
+  "result": {
+    "id": "create_armored_rails:tungsten_alloy_block"
+  }
+}

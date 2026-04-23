@@ -3,7 +3,7 @@ plugins {
 }
 
 group = "com.leclowndu93150"
-version = "1.2.2"
+version = "1.2.3"
 
 prism {
     curseMaven()
@@ -65,7 +65,7 @@ prism {
     }
 
     publishing {
-        changelog = "- Ported to 1.21.1 NeoForge\n- Added JEI exclusion zone for hull stats widget"
+        changelog = "Fixes broken recipes"
         type = STABLE
 
         curseforge {

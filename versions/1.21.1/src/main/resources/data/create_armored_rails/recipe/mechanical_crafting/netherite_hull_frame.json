@@ -1,0 +1,25 @@
+{
+  "type": "create:mechanical_crafting",
+  "pattern": [
+    " AAA ",
+    "AB BA",
+    "A C A",
+    "AB BA",
+    " AAA "
+  ],
+  "key": {
+    "A": {
+      "item": "minecraft:netherite_scrap"
+    },
+    "B": {
+      "tag": "c:ingots/netherite"
+    },
+    "C": {
+      "tag": "c:storage_blocks/netherite"
+    }
+  },
+  "result": {
+    "id": "create_armored_rails:netherite_hull_frame"
+  },
+  "accept_mirrored": true
+}

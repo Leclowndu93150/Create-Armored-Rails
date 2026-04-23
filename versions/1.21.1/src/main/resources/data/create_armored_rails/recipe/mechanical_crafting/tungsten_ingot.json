@@ -1,0 +1,17 @@
+{
+  "type": "create:mechanical_crafting",
+  "pattern": [
+    "AAA",
+    "AAA",
+    "AAA"
+  ],
+  "key": {
+    "A": {
+      "tag": "c:nuggets/tungsten"
+    }
+  },
+  "result": {
+    "id": "create_armored_rails:tungsten_ingot"
+  },
+  "accept_mirrored": true
+}

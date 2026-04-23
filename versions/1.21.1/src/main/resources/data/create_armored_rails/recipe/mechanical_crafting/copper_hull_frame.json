@@ -1,0 +1,25 @@
+{
+  "type": "create:mechanical_crafting",
+  "pattern": [
+    " AAA ",
+    "AB BA",
+    "A C A",
+    "AB BA",
+    " AAA "
+  ],
+  "key": {
+    "A": {
+      "tag": "c:plates/copper"
+    },
+    "B": {
+      "item": "create:sturdy_sheet"
+    },
+    "C": {
+      "tag": "c:storage_blocks/copper"
+    }
+  },
+  "result": {
+    "id": "create_armored_rails:copper_hull_frame"
+  },
+  "accept_mirrored": true
+}

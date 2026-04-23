@@ -1,0 +1,16 @@
+{
+  "type": "create:item_application",
+  "ingredients": [
+    {
+      "tag": "c:stripped_logs"
+    },
+    {
+      "tag": "c:ingots/tungsten_alloy"
+    }
+  ],
+  "results": [
+    {
+      "id": "create_armored_rails:tungsten_alloy_casing_connected"
+    }
+  ]
+}

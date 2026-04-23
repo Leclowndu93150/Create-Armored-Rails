@@ -1,0 +1,15 @@
+{
+  "type": "create:crushing",
+  "ingredients": [
+    {
+      "tag": "c:ingots/tungsten"
+    }
+  ],
+  "results": [
+    {
+      "count": 9,
+      "id": "create_armored_rails:tungsten_nugget"
+    }
+  ],
+  "processing_time": 100
+}

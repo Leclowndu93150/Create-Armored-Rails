@@ -1,0 +1,27 @@
+{
+  "type": "create:mechanical_crafting",
+  "pattern": [
+    " A ",
+    "BCB",
+    "BDB",
+    " A "
+  ],
+  "key": {
+    "A": {
+      "item": "minecraft:ender_pearl"
+    },
+    "B": {
+      "tag": "c:glass_blocks"
+    },
+    "C": {
+      "item": "create:precision_mechanism"
+    },
+    "D": {
+      "item": "minecraft:fermented_spider_eye"
+    }
+  },
+  "result": {
+    "id": "create_armored_rails:optical_camouflage"
+  },
+  "accept_mirrored": true
+}

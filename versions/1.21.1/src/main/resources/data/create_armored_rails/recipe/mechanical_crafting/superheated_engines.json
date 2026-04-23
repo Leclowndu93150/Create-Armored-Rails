@@ -1,0 +1,27 @@
+{
+  "type": "create:mechanical_crafting",
+  "pattern": [
+    " A ",
+    "BCB",
+    "BDB",
+    " A "
+  ],
+  "key": {
+    "A": {
+      "item": "create:shaft"
+    },
+    "B": {
+      "tag": "c:plates/iron"
+    },
+    "C": {
+      "item": "create:precision_mechanism"
+    },
+    "D": {
+      "item": "create:blaze_cake"
+    }
+  },
+  "result": {
+    "id": "create_armored_rails:superheated_engines"
+  },
+  "accept_mirrored": true
+}
