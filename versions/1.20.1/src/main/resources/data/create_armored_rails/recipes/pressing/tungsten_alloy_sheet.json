@@ -2,7 +2,7 @@
   "type": "create:pressing",
   "ingredients": [
     {
-      "tag": "create_armored_rails:tungsten_alloy_ingot"
+      "tag": "forge:ingots/tungsten_alloy"
     }
   ],
   "results": [

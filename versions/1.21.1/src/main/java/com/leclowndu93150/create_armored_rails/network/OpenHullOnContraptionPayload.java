@@ -1,19 +1,15 @@
 package com.leclowndu93150.create_armored_rails.network;
 
 import com.leclowndu93150.create_armored_rails.CreateArmoredRails;
-import com.leclowndu93150.create_armored_rails.block.HullMenu;
-import com.leclowndu93150.create_armored_rails.client.HullScreen;
-import net.minecraft.client.Minecraft;
+import com.leclowndu93150.create_armored_rails.client.ClientPacketHandler;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.RegistryFriendlyByteBuf;
-import net.minecraft.network.chat.Component;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.entity.player.Inventory;
-import net.neoforged.neoforge.items.ItemStackHandler;
+import net.neoforged.fml.loading.FMLEnvironment;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 
 public record OpenHullOnContraptionPayload(int entityId, BlockPos localPos, CompoundTag inventoryNBT, int containerId) implements CustomPacketPayload {
@@ -35,13 +31,9 @@ public record OpenHullOnContraptionPayload(int entityId, BlockPos localPos, Comp
 
     public static void handle(OpenHullOnContraptionPayload payload, IPayloadContext context) {
         context.enqueueWork(() -> {
-            Minecraft mc = Minecraft.getInstance();
-            if (mc.player == null) return;
-            ItemStackHandler handler = HullMenu.loadInventory(mc.player.registryAccess(), payload.inventoryNBT);
-            Inventory playerInv = mc.player.getInventory();
-            HullMenu menu = new HullMenu(payload.containerId, playerInv, handler, payload.entityId, payload.localPos);
-            mc.player.containerMenu = menu;
-            mc.setScreen(new HullScreen(menu, playerInv, Component.translatable("block.create_armored_rails.hull")));
+            if (FMLEnvironment.dist.isClient()) {
+                ClientPacketHandler.handleOpenHull(payload.entityId, payload.localPos, payload.inventoryNBT, payload.containerId);
+            }
         });
     }
 }

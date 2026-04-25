@@ -1,14 +1,11 @@
 package com.leclowndu93150.create_armored_rails.network;
 
-import com.leclowndu93150.create_armored_rails.block.HullMenu;
-import com.leclowndu93150.create_armored_rails.client.HullScreen;
-import net.minecraft.client.Minecraft;
+import com.leclowndu93150.create_armored_rails.client.ClientPacketHandler;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.network.chat.Component;
-import net.minecraft.world.entity.player.Inventory;
-import net.minecraftforge.items.ItemStackHandler;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.network.NetworkEvent;
 
 import java.util.function.Supplier;
@@ -39,13 +36,8 @@ public class OpenHullOnContraptionPacket {
 
     public static void handle(OpenHullOnContraptionPacket pkt, Supplier<NetworkEvent.Context> ctx) {
         ctx.get().enqueueWork(() -> {
-            Minecraft mc = Minecraft.getInstance();
-            if (mc.player == null) return;
-            ItemStackHandler handler = HullMenu.loadInventory(pkt.inventoryNBT);
-            Inventory playerInv = mc.player.getInventory();
-            HullMenu menu = new HullMenu(pkt.containerId, playerInv, handler, pkt.entityId, pkt.localPos);
-            mc.player.containerMenu = menu;
-            mc.setScreen(new HullScreen(menu, playerInv, Component.translatable("block.create_armored_rails.hull")));
+            DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () ->
+                    ClientPacketHandler.handleOpenHull(pkt.entityId, pkt.localPos, pkt.inventoryNBT, pkt.containerId));
         });
         ctx.get().setPacketHandled(true);
     }

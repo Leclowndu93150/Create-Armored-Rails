@@ -3,7 +3,7 @@ plugins {
 }
 
 group = "com.leclowndu93150"
-version = "1.2.3"
+version = "1.2.4"
 
 prism {
     curseMaven()
@@ -65,7 +65,12 @@ prism {
     }
 
     publishing {
-        changelog = "Fixes broken recipes"
+        changelog = """
+            - Fixed dedicated server crash caused by client class loading in packet handlers and config screen registration
+            - Fixed tungsten alloy sheet pressing recipe using invalid tag
+            - Fixed compatibility crash with Create Connected (duplicate interactive block registration)
+            - Disabled mechanic villager profession (missing textures)
+        """.trimIndent()
         type = STABLE
 
         curseforge {
